@@ -1,0 +1,29 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Tags
+    network: mumbai
+    source:
+      address: "0xDe4d7F0A42aa7DF311b3cC18eF5231f501168695"
+      abi: Tags
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - AddTag
+        - DeleteTag
+        - OwnershipTransferred
+      abis:
+        - name: Tags
+          file: ./abis/Tags.json
+      eventHandlers:
+        - event: AddTag(address,string)
+          handler: handleAddTag
+        - event: DeleteTag(address,string)
+          handler: handleDeleteTag
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/tags.ts
