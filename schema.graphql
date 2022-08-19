@@ -1,6 +1,22 @@
-type ExampleEntity @entity {
-  id: ID!
-  count: BigInt!
-  person: Bytes! # address
-  tag: String! # string
+type Address @entity {
+    id: Bytes!
+    address: Bytes!
+    tags: [TagCount!]! @derivedFrom(field: "address")
+    created: String!
+}
+
+type TagCount @entity {
+    id: String!
+    tag: Tag!
+    address: Address!
+    count: Int!
+    created: String!
+    updated: String!
+}
+
+type Tag @entity {
+    id: String!
+    name: String!
+    sentiment: Boolean
+    addresses: [TagCount!] @derivedFrom(field: "tag")
 }
