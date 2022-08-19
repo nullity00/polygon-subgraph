@@ -11,7 +11,66 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class ExampleEntity extends Entity {
+export class Address extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Address entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type Address must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Address", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): Address | null {
+    return changetype<Address | null>(store.get("Address", id.toHexString()));
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value!.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get tags(): Array<string> {
+    let value = this.get("tags");
+    return value!.toStringArray();
+  }
+
+  set tags(value: Array<string>) {
+    this.set("tags", Value.fromStringArray(value));
+  }
+
+  get created(): string {
+    let value = this.get("created");
+    return value!.toString();
+  }
+
+  set created(value: string) {
+    this.set("created", Value.fromString(value));
+  }
+}
+
+export class TagCount extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -19,18 +78,18 @@ export class ExampleEntity extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save ExampleEntity entity without an ID");
+    assert(id != null, "Cannot save TagCount entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type ExampleEntity must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type TagCount must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("ExampleEntity", id.toString(), this);
+      store.set("TagCount", id.toString(), this);
     }
   }
 
-  static load(id: string): ExampleEntity | null {
-    return changetype<ExampleEntity | null>(store.get("ExampleEntity", id));
+  static load(id: string): TagCount | null {
+    return changetype<TagCount | null>(store.get("TagCount", id));
   }
 
   get id(): string {
@@ -42,24 +101,6 @@ export class ExampleEntity extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get count(): BigInt {
-    let value = this.get("count");
-    return value!.toBigInt();
-  }
-
-  set count(value: BigInt) {
-    this.set("count", Value.fromBigInt(value));
-  }
-
-  get person(): Bytes {
-    let value = this.get("person");
-    return value!.toBytes();
-  }
-
-  set person(value: Bytes) {
-    this.set("person", Value.fromBytes(value));
-  }
-
   get tag(): string {
     let value = this.get("tag");
     return value!.toString();
@@ -67,5 +108,108 @@ export class ExampleEntity extends Entity {
 
   set tag(value: string) {
     this.set("tag", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value!.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get count(): i32 {
+    let value = this.get("count");
+    return value!.toI32();
+  }
+
+  set count(value: i32) {
+    this.set("count", Value.fromI32(value));
+  }
+
+  get created(): string {
+    let value = this.get("created");
+    return value!.toString();
+  }
+
+  set created(value: string) {
+    this.set("created", Value.fromString(value));
+  }
+
+  get updated(): string {
+    let value = this.get("updated");
+    return value!.toString();
+  }
+
+  set updated(value: string) {
+    this.set("updated", Value.fromString(value));
+  }
+}
+
+export class Tag extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Tag entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Tag must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Tag", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Tag | null {
+    return changetype<Tag | null>(store.get("Tag", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value!.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get sentiment(): boolean {
+    let value = this.get("sentiment");
+    return value!.toBoolean();
+  }
+
+  set sentiment(value: boolean) {
+    this.set("sentiment", Value.fromBoolean(value));
+  }
+
+  get addresses(): Array<string> | null {
+    let value = this.get("addresses");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set addresses(value: Array<string> | null) {
+    if (!value) {
+      this.unset("addresses");
+    } else {
+      this.set("addresses", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }

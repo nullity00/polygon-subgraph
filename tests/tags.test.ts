@@ -7,7 +7,6 @@ import {
   afterAll
 } from "matchstick-as/assembly/index"
 import { Address } from "@graphprotocol/graph-ts"
-import { ExampleEntity } from "../generated/schema"
 import { AddTag } from "../generated/Tags/Tags"
 import { handleAddTag } from "../src/tags"
 import { createAddTagEvent } from "./tags-utils"
@@ -18,9 +17,10 @@ import { createAddTagEvent } from "./tags-utils"
 describe("Describe entity assertions", () => {
   beforeAll(() => {
     let person = Address.fromString(
-      "0x0000000000000000000000000000000000000001"
+      // "0x0000000000000000000000000000000000000001"
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a"
     )
-    let tag = "Example string value"
+    let tag = "trust"
     let newAddTagEvent = createAddTagEvent(person, tag)
     handleAddTag(newAddTagEvent)
   })
@@ -32,21 +32,27 @@ describe("Describe entity assertions", () => {
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test("ExampleEntity created and stored", () => {
-    assert.entityCount("ExampleEntity", 1)
+  test("Entity created and stored", () => {
+    assert.entityCount("TagCount", 1)
 
     // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
     assert.fieldEquals(
-      "ExampleEntity",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a",
-      "person",
-      "0x0000000000000000000000000000000000000001"
+      "TagCount",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-trust",
+      "count",
+      "1"
     )
     assert.fieldEquals(
-      "ExampleEntity",
+      "Address",
       "0xa16081f360e3847006db660bae1c6d1b2e17ec2a",
-      "tag",
-      "Example string value"
+      "address",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a"
+    )
+    assert.fieldEquals(
+      "Tag",
+      "trust",
+      "name",
+      "trust"
     )
 
     // More assert options:
