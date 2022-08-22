@@ -1,13 +1,10 @@
-import { Bytes } from "@graphprotocol/graph-ts"
 import {
   AddTag,
   DeleteTag,
-  OwnershipTransferred
-} from "../generated/Tags/Tags"
-import { Address, Tag, TagCount } from "../generated/schema"
-
-// const positiveSentiment = ['trust']
-// const negativeSentiment = ['fraud', 'spam']
+  OwnershipTransferred,
+} from "../generated/Tags/Tags";
+import { Address, Tag, TagCount } from "../generated/schema";
+import { Bytes } from "@graphprotocol/graph-ts";
 
 // type SentMap = {
 //   [key: string]: boolean;
@@ -19,124 +16,104 @@ import { Address, Tag, TagCount } from "../generated/schema"
 //   spam: false,
 // };
 
+const validTags = ["friend", "trust", "smrtCntct", "fraud", "spam"];
+const positiveSentiment = ["friend", "trust"];
+const negativeSentiment = ["fraud", "spam"];
 
-function setTagCount(address: Address, tag: Tag, now: string, op: string): TagCount {
-
-  let id = address.address.toHexString() + "-" + tag.name
-  let tagCount = TagCount.load(id)
+function setTagCount(
+  address: Address,
+  tag: Tag,
+  now: string,
+  op: string
+): TagCount {
+  let id = address.address + "-" + tag.name;
+  let tagCount = TagCount.load(id);
 
   if (!tagCount) {
-    tagCount = new TagCount(id)
-    tagCount.address = address.address
-    tagCount.tag = tag.name
-    tagCount.count = 0
-    tagCount.created = now
+    tagCount = new TagCount(id);
+    tagCount.address = address.address;
+    tagCount.tag = tag.name;
+    tagCount.count = 0;
+    tagCount.created = now;
   }
 
   if (op == "add") {
-    tagCount.count = tagCount.count + 1
+    tagCount.count = tagCount.count + 1;
   } else if (op == "delete") {
-    tagCount.count = tagCount.count - 1
+    tagCount.count = tagCount.count - 1;
   }
-
-  // switch (op) {
-  //   case 'add':
-  //     tagCount.count = tagCount.count + 1
-  //     break
-  //   case 'delete':
-  //     tagCount.count = tagCount.count - 1
-  //     break
-  //   default:
-  //     break
-  // }
 
   if (tagCount.count < 0) {
-    tagCount.count = 0
+    tagCount.count = 0;
   }
 
-  tagCount.updated = now
-  tagCount.save()
+  tagCount.updated = now;
+  tagCount.save();
 
-  return tagCount as TagCount
+  return tagCount as TagCount;
 }
-
 
 function getTag(tag: string): Tag {
-  let tagEntity = Tag.load(tag)
+  let tagEntity = Tag.load(tag);
   if (!tagEntity) {
-    tagEntity = new Tag(tag)
-    tagEntity.name = tag
+    tagEntity = new Tag(tag);
+    tagEntity.name = tag;
     // tagEntity.sentiment = sentMap[tag]
 
-    if (tag == "trust") {
-      tagEntity.sentiment = true
-    } else if (tag == "fraud" || tag == "spam") {
-      tagEntity.sentiment = false
+    if (positiveSentiment.includes(tag)) {
+      tagEntity.sentiment = "positive";
+    } else if (negativeSentiment.includes(tag)) {
+      tagEntity.sentiment = "negative";
+    } else {
+      tagEntity.sentiment = "neutral";
     }
-
-    // impl signature: loose
-    // switch (tag) {
-    //   case 'trust':
-    //     tagEntity.sentiment = true
-    //     break
-    //   case 'fraud':
-    //   case 'spam':
-    //     tagEntity.sentiment = false
-    //     break
-    // default:
-    //   // tagEntity.sentiment = null
-    //   break
   }
-  tagEntity.save()
-  return tagEntity as Tag
+  tagEntity.save();
+  return tagEntity as Tag;
 }
 
-
-function getAddress(address: Bytes, now: string): Address {
-
-  let addressEntity = Address.load(address)
+function getAddress(address: string, now: string): Address {
+  let addressEntity = Address.load(address);
 
   if (!addressEntity) {
-    addressEntity = new Address(address)
-    addressEntity.address = address
-    addressEntity.created = now
-    addressEntity.save()
+    addressEntity = new Address(address);
+    addressEntity.address = address;
+    addressEntity.created = now;
+    addressEntity.save();
   }
-  return addressEntity as Address
+  return addressEntity as Address;
 }
 
+function tagging(tag: string, person: string, now: string, op: string): void {
+  let tagEntity = getTag(tag);
 
-function tagging(tag: string, person: Bytes, now: string, op: string): void {
-
-  let tagEntity = getTag(tag)
-
-  let addressEntity = getAddress(person, now)
+  let addressEntity = getAddress(person, now);
 
   // set tag count
-  setTagCount(addressEntity, tagEntity, now, op)
+  setTagCount(addressEntity, tagEntity, now, op);
 }
-
 
 export function handleAddTag(event: AddTag): void {
+  let tag = event.params.tag;
+  if (validTags.includes(tag)) {
+    let person = event.params.person.toHexString();
+    const now = event.block.timestamp.toHexString();
 
-  let tag = event.params.tag
-  let person = event.params.person
-  const now = event.block.timestamp.toHexString()
-
-  tagging(tag, person, now, 'add')
+    tagging(tag, person, now, "add");
+  }
 }
-
 
 export function handleDeleteTag(event: DeleteTag): void {
+  let tag = event.params.tag;
+  if (validTags.includes(tag)) {
+    let person = event.params.person.toHexString();
+    const now = event.block.timestamp.toHexString();
 
-  let tag = event.params.tag
-  let person = event.params.person
-  const now = event.block.timestamp.toHexString()
-
-  tagging(tag, person, now, 'delete')
+    tagging(tag, person, now, "delete");
+  }
 }
 
-// export function handleOwnershipTransferred(event: OwnershipTransferred): void { }
+export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
 // Entities can be loaded from the store using a string ID; this ID
 // needs to be unique across all entities of the same type

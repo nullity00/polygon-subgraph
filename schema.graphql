@@ -1,22 +1,22 @@
 type Address @entity {
-    id: Bytes!
-    address: Bytes!
-    tags: [TagCount!]! @derivedFrom(field: "address")
-    created: String!
+  id: ID!
+  address: String!
+  tags: [TagCount!]! @derivedFrom(field: "address")
+  created: String!
 }
 
 type TagCount @entity {
-    id: String!
-    tag: Tag!
-    address: Address!
-    count: Int!
-    created: String!
-    updated: String!
+  id: ID!
+  tag: Tag!
+  address: Address!
+  count: Int!
+  created: String!
+  updated: String!
 }
 
 type Tag @entity {
-    id: String!
-    name: String!
-    sentiment: Boolean
-    addresses: [TagCount!] @derivedFrom(field: "tag")
+  id: ID!
+  name: String!
+  sentiment: String!
+  addresses: [TagCount!] @derivedFrom(field: "tag")
 }
