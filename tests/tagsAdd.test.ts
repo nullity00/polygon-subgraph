@@ -52,7 +52,7 @@ describe("Describe entity assertions", () => {
       "0xa16081f360e3847006db660bae1c6d1b2e17ec2a"
     );
     assert.fieldEquals("Tag", "trust", "name", "trust");
-    assert.fieldEquals("Tag", "trust", "sentiment", "true");
+    assert.fieldEquals("Tag", "trust", "sentiment", "positive");
 
     // More assert options:
     // https://thegraph.com/docs/en/developer/matchstick/#asserts

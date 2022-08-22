@@ -12,6 +12,7 @@ const validTags = ["friend", "trust", "smrtCntct", "fraud", "spam"];
 
 ## How to query
 
+EVM wallet addresses will be **lowercased** to avoid dupilcate entities.
 This query will return all tags for an EVM address:
 
 ```graphql

@@ -96,7 +96,7 @@ function tagging(tag: string, person: string, now: string, op: string): void {
 export function handleAddTag(event: AddTag): void {
   let tag = event.params.tag;
   if (validTags.includes(tag)) {
-    let person = event.params.person.toHexString();
+    let person = event.params.person.toHexString().toLowerCase();
     const now = event.block.timestamp.toHexString();
 
     tagging(tag, person, now, "add");
@@ -106,7 +106,7 @@ export function handleAddTag(event: AddTag): void {
 export function handleDeleteTag(event: DeleteTag): void {
   let tag = event.params.tag;
   if (validTags.includes(tag)) {
-    let person = event.params.person.toHexString();
+    let person = event.params.person.toHexString().toLowerCase();
     const now = event.block.timestamp.toHexString();
 
     tagging(tag, person, now, "delete");
