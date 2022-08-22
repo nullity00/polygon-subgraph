@@ -8,13 +8,13 @@ import {
   store,
   Bytes,
   BigInt,
-  BigDecimal
+  BigDecimal,
 } from "@graphprotocol/graph-ts";
 
 export class Address extends Entity {
-  constructor(id: Bytes) {
+  constructor(id: string) {
     super();
-    this.set("id", Value.fromBytes(id));
+    this.set("id", Value.fromString(id));
   }
 
   save(): void {
@@ -22,33 +22,33 @@ export class Address extends Entity {
     assert(id != null, "Cannot save Address entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.BYTES,
-        `Entities of type Address must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.STRING,
+        `Entities of type Address must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("Address", id.toBytes().toHexString(), this);
+      store.set("Address", id.toString(), this);
     }
   }
 
-  static load(id: Bytes): Address | null {
-    return changetype<Address | null>(store.get("Address", id.toHexString()));
+  static load(id: string): Address | null {
+    return changetype<Address | null>(store.get("Address", id));
   }
 
-  get id(): Bytes {
+  get id(): string {
     let value = this.get("id");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set id(value: Bytes) {
-    this.set("id", Value.fromBytes(value));
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
-  get address(): Bytes {
+  get address(): string {
     let value = this.get("address");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set address(value: Bytes) {
-    this.set("address", Value.fromBytes(value));
+  set address(value: string) {
+    this.set("address", Value.fromString(value));
   }
 
   get tags(): Array<string> {
@@ -110,13 +110,13 @@ export class TagCount extends Entity {
     this.set("tag", Value.fromString(value));
   }
 
-  get address(): Bytes {
+  get address(): string {
     let value = this.get("address");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set address(value: Bytes) {
-    this.set("address", Value.fromBytes(value));
+  set address(value: string) {
+    this.set("address", Value.fromString(value));
   }
 
   get count(): i32 {
@@ -187,13 +187,13 @@ export class Tag extends Entity {
     this.set("name", Value.fromString(value));
   }
 
-  get sentiment(): boolean {
+  get sentiment(): string {
     let value = this.get("sentiment");
-    return value!.toBoolean();
+    return value!.toString();
   }
 
-  set sentiment(value: boolean) {
-    this.set("sentiment", Value.fromBoolean(value));
+  set sentiment(value: string) {
+    this.set("sentiment", Value.fromString(value));
   }
 
   get addresses(): Array<string> | null {
